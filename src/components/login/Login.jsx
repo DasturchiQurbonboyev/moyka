@@ -40,7 +40,6 @@ const Login = () => {
   return (
     <>
       <div className="login__page">
-        {/* <canvas id="canvas"></canvas> */}
         <form onSubmit={loginSubmit} action="#" method="post" className="space-y-4 log-in">
             <div>
               <label htmlFor="login" className="mb-2  text-white text-lg">Login</label>

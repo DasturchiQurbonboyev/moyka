@@ -6,7 +6,8 @@ import {
     FaShoppingBag,
     FaThList,
     FaQq,
-    FaSteamSquare
+    FaSteamSquare,
+    FaRegUser
 } from "react-icons/fa";
 import logo from '../../assets/sidebar/logo.png'
 import { NavLink } from 'react-router-dom';
@@ -15,6 +16,9 @@ import { MdCategory, MdContactPage } from 'react-icons/md';
 import { RiDiscountPercentFill } from 'react-icons/ri';
 import { GiResize } from 'react-icons/gi';
 import { IoColorPalette, IoNewspaper } from 'react-icons/io5';
+import { GrUserWorker } from 'react-icons/gr';
+import { CiBoxes } from 'react-icons/ci';
+import { BsMenuButtonWideFill } from 'react-icons/bs';
 
 
 const Sidebar = ({ children }) => {
@@ -24,28 +28,28 @@ const Sidebar = ({ children }) => {
         {
             path: "/workers",
             name: "Ishchilar",
-            icon: <AiFillProduct />
+            icon: <GrUserWorker />
         },
         {
             path: "/users",
             name: "Foydalanuvchilar",
-            icon: <MdCategory />
+            icon: <FaRegUser  />
         },
         {
             path: "/box",
             name: "Box",
-            icon: <RiDiscountPercentFill />
+            icon: <CiBoxes  />
         },
         {
             path: "/tariflar",
             name: "Tariflar",
-            icon: <GiResize />
+            icon: <BsMenuButtonWideFill  />
         },
-        {
-            path: "/buyutmalar",
-            name: "Buyutmalar",
-            icon: <IoColorPalette />
-        },
+        // {
+        //     path: "/buyutmalar",
+        //     name: "Buyutmalar",
+        //     icon: <IoColorPalette />
+        // },
         
 
     ]
