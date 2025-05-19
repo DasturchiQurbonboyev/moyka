@@ -9,8 +9,7 @@ import UserAdminComponent from './components/admin/UserAdminComponent'
 import Home from './components/home/Home'
 import Buyrutmalar from './components/buyrutmalar/Buyrutmalar'
 import Tariflar from './components/tariflar/Tariflar'
-import Box from './components/box/box'
-
+import Box from './components/box/Box'
 
 function App() {
   return (
