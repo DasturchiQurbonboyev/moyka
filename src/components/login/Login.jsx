@@ -28,8 +28,8 @@ const Login = () => {
     .then((res)=> res.json())
     .then((item)=> {
       if(item?.token){
-        toast.success("Login Successfull")
         localStorage.setItem("token", item?.token)
+        toast.success("Login Successfull")
         navigate("/workers")
       } else{
         toast.error("Login Failed")
