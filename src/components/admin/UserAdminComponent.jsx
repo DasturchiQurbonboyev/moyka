@@ -11,7 +11,7 @@ const UserAdminComponent = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [userData, setUserData] = useState([]);
-  console.log(userData);
+  const [loading, setLoading] = useState(true);
   
     useEffect(() => {
       if (editUserId) {
@@ -27,7 +27,7 @@ const UserAdminComponent = () => {
   
 
   const getUser = ()=>{
-    fetch("http://45.154.2.116:7010/api/admin/users?role=ADMIN", {
+    fetch("http://45.154.2.116:7010/api/admin/users?role=USER", {
       method: "GET",
       headers: {
         "Content-type": "application/json",
@@ -35,7 +35,10 @@ const UserAdminComponent = () => {
       },
     })
       .then((res) => res.json())
-      .then((item) => setUserData(item));
+      .then((item) => {
+        setUserData(item)
+        setLoading(false)
+      });
   }
 
   const edidUser =()=>{
@@ -45,7 +48,7 @@ const UserAdminComponent = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch("http://45.154.2.116:7010/api/admin/users?role=ADMIN", {
+      const response = await fetch("http://45.154.2.116:7010/api/admin/users?role=USER", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,12 +57,9 @@ const UserAdminComponent = () => {
         body: JSON.stringify({ fullName, phoneNumber, password }),
       });
   
-      // Avval javobni text shaklida olamiz
       const text = await response.text();
-  
-      // Text bo'sh emasligini tekshiramiz va JSON ga aylantirishga urinib ko'ramiz
       if (text) {
-        const data = JSON.parse(text); // yoki JSON.parse(text) bilan
+        const data = JSON.parse(text); 
         if (!response.ok) {
           throw new Error(data.message || 'Server xatosi');
         }
@@ -67,11 +67,9 @@ const UserAdminComponent = () => {
         toast.success("Ma'lumotlar qo'shildi");
         setCreateUser(false);
       } else {
-        // Javob bo‘sh bo‘lsa
         if (!response.ok) {
           throw new Error('Serverdan bo‘sh javob olindi');
         }
-        // Agar muvaffaqiyatli va bo‘sh javob bo‘lsa
         getUser();
         toast.success("Ma'lumotlar qo'shildi");
         setCreateUser(false);
@@ -81,15 +79,49 @@ const UserAdminComponent = () => {
       toast.error(`Xatolik: ${error.message}`);
     }
   };
+
+  const userDeleteItem = (id) => {
+    fetch(`http://45.154.2.116:7010/api/admin/users/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      .then(async (res) => {
+        const text = await res.text();
+  
+        if (!res.ok) throw new Error(text || "Xatolik yuz berdi");
+  
+        // agar javob text ko‘rinishida bo‘lsa, log qilamiz
+        if (text) {
+          console.log("DELETE response text:", text);
+          try {
+            const data = JSON.parse(text);
+          } catch (err) {
+            // JSON emasligi mumkin, muammo emas
+          }
+        }
+  
+        toast.success("Ma'lumotlar o'chirildi");
+        getUser();
+      })
+      .catch((err) => {
+        toast.error("Xatolik: " + err.message);
+      });
+  };
+  
   
   useEffect(()=>{
     getUser()
   },[])
 
-  if (userData.length === 0) return <h1>Loading...</h1>; 
+  if (loading) return <h1>Loading...</h1>; 
 
   return (
     <>
+    {
+      userData.length===0 ? <h1 className="text-center text-3xl font-bold leading-[75vh] ">Ma'lumotlar mavjud emas</h1> :
       <div
         className="relative flex flex-col w-full h-full text-gray-700 bg-white  bg-clip-border"
         style={{ padding: 0, margin: 0 }}
@@ -198,7 +230,7 @@ const UserAdminComponent = () => {
               className="flex flex-col gap-2 shrink-0 sm:flex-row"
               style={{ gap: "0.5rem", flexShrink: 0 }}
             >
-              <button
+              {/* <button
                 onClick={() => setCreateUser(true)}
                 className="flex select-none items-center gap-3 rounded-lg bg-gray-900 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                 type="button"
@@ -220,7 +252,7 @@ const UserAdminComponent = () => {
                   <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
                 </svg>
                 Foydalanuvchi qo'shish
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -279,9 +311,6 @@ const UserAdminComponent = () => {
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                           {el?.fullName}
                         </p>
-                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                          john@creative-tim.com
-                        </p>
                       </div>
                     </div>
                   </td>
@@ -302,7 +331,7 @@ const UserAdminComponent = () => {
                     className="p-4 border-b border-blue-gray-50"
                     style={{ padding: "1rem" }}
                   >
-                    <button
+                    {/* <button
                       onClick={() => setEditUserId(el)}
                       className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                       type="button"
@@ -318,8 +347,9 @@ const UserAdminComponent = () => {
                           <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
                         </svg>
                       </span>
-                    </button>
+                    </button> */}
                     <button
+                    onClick={()=>userDeleteItem(el?.id)}
                       className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                       type="button"
                     >
@@ -334,6 +364,7 @@ const UserAdminComponent = () => {
           </table>
         </div>
       </div>
+    }
     </>
   );
 };

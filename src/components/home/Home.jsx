@@ -11,7 +11,7 @@ const Home = () => {
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
-  console.log(workerData);
+  const [loading, setLoading] = useState(true);
   
 
     useEffect(() => {
@@ -37,6 +37,7 @@ const Home = () => {
       .then((res) => res.json())
       .then((item) => {
         setWorkerData(item);
+        setLoading(false);
       });
   };
 
@@ -80,8 +81,9 @@ const Home = () => {
 
   const editWorker = (e) => {
     e.preventDefault();
+  
     fetch(`http://45.154.2.116:7010/api/admin/users/${editWorkerId?.id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -89,17 +91,33 @@ const Home = () => {
       body: JSON.stringify({
         fullName,
         phoneNumber,
-        role,
       }),
     })
-      .then((res) => res.json())
-      .then((item) => {
+      .then(async (res) => {
+        const contentLength = res.headers.get("content-length");
+        let data = null;
+  
+        if (contentLength && +contentLength > 0) {
+          data = await res.json();
+        }
+  
+        if (!res.ok || data?.error) {
+          throw new Error(data?.error || "Xatolik yuz berdi");
+        }
+  
         toast.success("Ma'lumotlar tahrirlandi");
         getWorkers();
         setEditWorkerId(null);
+        setFullName("");
+        setPhoneNumber("");
+        setPassword("");
+      })
+      .catch((err) => {
+        console.error("Edit xatosi:", err.message);
+        toast.error(err.message || "Noma'lum xatolik");
       });
   };
-
+  
   const delWorkerItem = async (id) => {
     try {
       const response = await fetch(`http://45.154.2.116:7010/api/admin/users/${id}`, {
@@ -132,7 +150,7 @@ const Home = () => {
     getWorkers();
   }, []);
 
-  if (workerData.length === 0) return <h1>Loading...</h1>;
+  if (loading) return <h1>Loading...</h1>;
   return (
     <>
       <div
@@ -157,7 +175,7 @@ const Home = () => {
               </label>
               <input
                 onChange={(e) => setFullName(e.target.value)}
-                value={fullName}
+                defaultValue={editWorkerId ? editWorkerId?.fullName : ""}
                 type="text"
                 placeholder="FullName"
                 required
@@ -171,26 +189,32 @@ const Home = () => {
               </label>
               <input
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                value={phoneNumber}
+                defaultValue={editWorkerId ? editWorkerId?.phoneNumber : ""}
                 type="text"
                 placeholder="Phone Number"
                 required
                 className="w-full px-3  py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
               />
-              <label
-                style={{ marginBlock: "8px", display: "block" }}
-                htmlFor=""
-              >
-                Password
-              </label>
-              <input
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-                type="text"
-                placeholder="Phone Number"
-                required
-                className="w-full px-3  py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-              />
+              {
+                !editWorkerId && 
+                <div>
+
+                  <label
+                    style={{ marginBlock: "8px", display: "block" }}
+                    htmlFor=""
+                  >
+                    Password
+                  </label>
+                  <input
+                    onChange={(e) => setPassword(e.target.value)}
+                    defaultValue={editWorkerId ? editWorkerId?.password : ""}
+                    type="text"
+                    placeholder="Password"
+                    required
+                    className="w-full px-3  py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              }
               <div
                 style={{
                   marginBlock: "15px",
@@ -278,6 +302,8 @@ const Home = () => {
             paddingRight: 0,
           }}
         >
+          {
+            workerData.length===0 ? <h1 className="text-center text-3xl font-bold">Ishchilar mavjud emas</h1> : 
           <table className="w-full mt-4 text-left table-auto min-w-max">
             <thead>
               <tr>
@@ -324,9 +350,7 @@ const Home = () => {
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                           {el?.fullName}
                         </p>
-                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                          john@creative-tim.com
-                        </p>
+                        
                       </div>
                     </div>
                   </td>
@@ -378,6 +402,7 @@ const Home = () => {
               ))}
             </tbody>
           </table>
+          }
         </div>
       </div>
     </>

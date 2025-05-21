@@ -45,11 +45,11 @@ const Sidebar = ({ children }) => {
             name: "Tariflar",
             icon: <BsMenuButtonWideFill  />
         },
-        // {
-        //     path: "/buyutmalar",
-        //     name: "Buyutmalar",
-        //     icon: <IoColorPalette />
-        // },
+        {
+            path: "/buyutmalar",
+            name: "Buyutmalar",
+            icon: <IoColorPalette />
+        },
         
 
     ]

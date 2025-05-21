@@ -8,6 +8,7 @@ const Tariflar = () => {
   const [tariflarData, setTariflarData] = useState([]);
   const [createTarif, setCreateTarif] = useState(false);
   const [editTarifId, setEditTarifId] = useState();  
+  const [loading, setLoading] = useState(true);
 
   // Inputlardan qiymat olish
 
@@ -36,7 +37,10 @@ const Tariflar = () => {
       },
     })
       .then((res) => res.json())
-      .then((item) => setTariflarData(item));
+      .then((item) => {
+        setTariflarData(item)
+        setLoading(false)
+      });
   };
 
   const tarifQoshish = (e) => {
@@ -141,7 +145,7 @@ const Tariflar = () => {
     getTariflar();
   }, []);
 
-  if(tariflarData.length === 0) return <h1>Loading...</h1>
+  if(loading) return <h1>Loading...</h1>
   return (
     <>
       <div className=" relative flex flex-col w-full h-full  text-gray-700 bg-white ">
@@ -242,6 +246,8 @@ const Tariflar = () => {
             Tarif qo'shish
           </button>
         </div>
+        {
+          tariflarData.length == 0 ? <h1 className="text-center text-3xl font-bold leading-[75vh]">Tariflar mavjud emas!!!</h1> :
         <table className="w-full text-left table-auto min-w-max">
           <thead>
             <tr>
@@ -307,6 +313,7 @@ const Tariflar = () => {
             ))}
           </tbody>
         </table>
+        }
       </div>
     </>
   );

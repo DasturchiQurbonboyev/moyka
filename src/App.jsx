@@ -27,8 +27,6 @@ function App() {
           <Route path="box" element={<Box />} />
           <Route path="buyutmalar" element={<Buyrutmalar />} />
           <Route path="tariflar" element={<Tariflar />} />
-
-          {/* <Route path="user" element={<UserAdminComponent />} /> */}
         </Route>
       </Routes>
       <ToastContainer/>

@@ -11,11 +11,17 @@ const Box = () => {
   const [boxName, setBoxName] = useState("");
   const [boxType, setBoxType] = useState("");
   const [workerId, setWorkerId] = useState("");
-  const [workerData, setWorkerData] = useState([]);
-  // console.log(workerData);
-  console.log(boxData, "box");
-  console.log(workerData, "worker");
+  const [workerData, setWorkerData] = useState([]);  
+  const [loading, setLoading] = useState(true);
   
+  
+  useEffect(() => {
+    if(editBoxId){
+      setBoxName(editBoxId?.name || "");
+      setBoxType(editBoxId?.boxType || "");
+      setWorkerId(editBoxId?.workerId || "");
+    }
+  },[editBoxId])
   
   
 
@@ -28,7 +34,10 @@ const Box = () => {
       },
     })
       .then((res) => res.json())
-      .then((item) => setBoxData(item));
+      .then((item) => {
+        setBoxData(item)
+        setLoading(false)
+      });
   }
   const getWorkers = () => {
     fetch("http://45.154.2.116:7010/api/admin/users?role=WORKER", {
@@ -69,29 +78,10 @@ const Box = () => {
   };
   
 
-  // const editBox = (e) => {
-  //   e.preventDefault()
-  //   fetch(`http://45.154.2.116:7010/api/admin/boxes/${editBoxId?.id}`, {
-  //     method: "PUT",
-  //     headers: {
-  //       "Content-type": "application/json",
-  //       "Authorization": `Bearer ${token}`,
-  //     },
-  //     body: JSON.stringify({
-  //       name: boxName,
-  //       boxType: boxType,
-  //       workerId: +workerId,
-  //     }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((item) => {
-  //       getBoxes();
-  //       setEditBoxId(null);
-  //     });
-  // };
+
   const editBox = (e) => {
     e.preventDefault();
-  
+
     fetch(`http://45.154.2.116:7010/api/admin/boxes/${editBoxId?.id}`, {
       method: "PUT",
       headers: {
@@ -100,50 +90,98 @@ const Box = () => {
       },
       body: JSON.stringify({
         name: boxName,
-        boxType: boxType,
-        workerId: +workerId,
+        boxType: boxType === "INDEPENDENT" ? null : boxType,
+        workerId: boxType === "INDEPENDENT" ? null : +workerId,
       }),
     })
-      .then((res) => res.text())
-      .then((text) => {
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          throw new Error(text); // bu holatda textda xatolik xabari bo'ladi
+      .then(async (res) => {
+        const contentLength = res.headers.get("content-length");
+        let data = null;
+    
+        if (contentLength && +contentLength > 0) {
+          data = await res.json();
         }
-  
+    
+        if (!res.ok || data?.error) {
+          throw new Error(data?.error || "Xatolik yuz berdi");
+        }
+    
         getBoxes();
         setEditBoxId(null);
+        toast.success("Tahrirlandi");
       })
-      .catch((error) => {
-        toast.error(`Xatolik: ${error.message}`);
+      .catch((err) => {
+        console.error("Xatolik:", err.message);
+        toast.error(err.message || "Noma'lum xatolik");
       });
+    
   };
   
 
-  const createBoxFunc = (e) => {
-    e.preventDefault();
+  // const createBoxFunc = (e) => {
+  //   e.preventDefault();
 
-    fetch("http://45.154.2.116:7010/api/admin/boxes", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        name: boxName,
-        boxType: boxType,
-        workerId: workerId,
-      }),
-    })
-      .then((res) => res.json())
-      .then((item) => {
+  //   fetch("http://45.154.2.116:7010/api/admin/boxes", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-type": "application/json",
+  //       "Authorization": `Bearer ${token}`,
+  //     },
+  //     body: JSON.stringify({
+  //       name: boxName,
+  //       boxType: boxType,
+  //       workerId: workerId,
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((item) => {
+  //       getBoxes();
+  //       toast.success("Qo'shildi");
+  //       setCreateBox(false);
+  //       editBoxId(null);
+  //     });
+  // };
+
+  const createBoxFunc = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await fetch("http://45.154.2.116:7010/api/admin/boxes", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: boxName,
+          boxType: boxType,
+          workerId: workerId,
+        }),
+      });
+  
+      const text = await response.text(); 
+  
+      if (!response.ok) {
+        throw new Error(text || "Xatolik yuz berdi");
+      }
+  
+      if (text) {
+        const item = JSON.parse(text);
+        toast.success("Qo'shildi");
         getBoxes();
         setCreateBox(false);
-      });
+      } else {
+        toast.success("Qo'shildi (javobsiz)");
+        getBoxes();
+        setCreateBox(false);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Xatolik: " + error.message);
+    }
   };
-
+  
+  
   useEffect(()=>{
     getBoxes()
   },[])
@@ -152,7 +190,7 @@ const Box = () => {
     getWorkers()
   },[editBoxId])
 
-  if (boxData.length === 0) return <h1>Loading...</h1>;
+  if (loading) return <h1>Loading...</h1>;
   return (
     <>
       <div className=" relative flex flex-col w-full h-full  text-gray-700 bg-white ">
@@ -187,13 +225,13 @@ const Box = () => {
                 boxType
               </label>
               <select
+                value={boxType}
                 onChange={(e) => setBoxType(e.target.value)}
                 style={{ padding: "8px 10px" }}
                 className="outline-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-[5px] focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
-                <option selected>Choose a type</option>
-                <option value="INDEPENDENT">INDEPENDENT</option>
-                <option value="WORKER">WORKER</option>
+                <option value="INDEPENDENT">Sammoy</option>
+                <option value="WORKER">Ishchi yuvadi</option>
               </select>
               {
                 boxType === "WORKER" && 
@@ -202,17 +240,18 @@ const Box = () => {
                   style={{ marginBlock: "8px", display: "block" }}
                   htmlFor=""
                 >
-                  Price
+                  Ishchilar
                 </label>
                 <select
+                value={workerId}
                 onChange={(e) => setWorkerId(e.target.value)}
                   style={{ padding: "8px 10px" }}
                   id="countries"
                   className="outline-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-[5px] focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   {
-                    workerData.map((item) => (
-                      <option value={item?.id}>{item?.fullName}</option>
+                    workerData.map((item,index) => (
+                      <option key={index} value={item?.id}>{item?.fullName}</option>
                     ))
                   }
                 
@@ -261,9 +300,11 @@ const Box = () => {
             }}
             className="px-5 py-2.5 cursor-pointer me-2 mb-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
-            Tarif qo'shish
+            Box qo'shish
           </button>
         </div>
+        {
+          boxData.length==0 ? <h1 className="text-center text-3xl font-bold leading-[75vh]"> Ma'lumotlar mavjud emas!!!</h1>:
         <table className="w-full text-left table-auto min-w-max">
           <thead>
             <tr>
@@ -304,7 +345,7 @@ const Box = () => {
                 </td>
                 <td className="p-4 border-b border-blue-gray-50">
                   <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    {el?.boxType}
+                    {el?.boxType ==="WORKER"?"Ishchi yuvadi":"Sammoy"}
                   </p>
                 </td>
                 <td className="p-4 border-b border-blue-gray-50">
@@ -329,6 +370,8 @@ const Box = () => {
             ))}
           </tbody>
         </table>
+
+        }
       </div>
     </>
   );
