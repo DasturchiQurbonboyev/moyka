@@ -223,7 +223,7 @@ const UserAdminComponent = () => {
           >
             <div>
               <h5 className="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-                Ishchilar
+                Foydalanuvchilar
               </h5>
             </div>
             <div
