@@ -90,7 +90,7 @@ const Box = () => {
       },
       body: JSON.stringify({
         name: boxName,
-        boxType: boxType === "INDEPENDENT" ? null : boxType,
+        boxType: boxType ,
         workerId: boxType === "INDEPENDENT" ? null : +workerId,
       }),
     })
