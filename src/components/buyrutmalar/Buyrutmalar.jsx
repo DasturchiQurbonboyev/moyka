@@ -13,7 +13,7 @@ const Buyrutmalar = () => {
   
   const getBuyrutmaLar = () => {
   
-    fetch("http://45.154.2.116:7010/api/bookings/booking", {
+    fetch("https://u-dev.uz/api/bookings/booking", {
       method: "GET",
       headers: {
         "Content-type": "application/json",

@@ -29,7 +29,7 @@ const Tariflar = () => {
   }, [editTarifId]);
 
   const getTariflar = () => {
-    fetch("http://45.154.2.116:7010/api/admin/tariffs", {
+    fetch("https://u-dev.uz/api/admin/tariffs", {
       method: "GET",
       headers: {
         "Content-type": "application/json",
@@ -45,7 +45,7 @@ const Tariflar = () => {
 
   const tarifQoshish = (e) => {
     e.preventDefault();
-    fetch("http://45.154.2.116:7010/api/admin/tariffs", {
+    fetch("https://u-dev.uz/api/admin/tariffs", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -70,7 +70,7 @@ const Tariflar = () => {
   };
 
   const tarifOchirish = (id) => {
-    fetch(`http://45.154.2.116:7010/api/admin/tariffs/${id}`, {
+    fetch(`https://u-dev.uz/api/admin/tariffs/${id}`, {
       method: "DELETE",
       headers: {
         "Content-type": "application/json",
@@ -98,7 +98,7 @@ const Tariflar = () => {
     e.preventDefault();
   
     try {
-      const res = await fetch(`http://45.154.2.116:7010/api/admin/tariffs/${editTarifId?.id}`, {
+      const res = await fetch(`https://u-dev.uz/api/admin/tariffs/${editTarifId?.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

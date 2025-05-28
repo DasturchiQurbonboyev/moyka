@@ -27,7 +27,7 @@ const Home = () => {
     }, [editWorkerId]);
   
   const getWorkers = () => {
-    fetch("http://45.154.2.116:7010/api/admin/users?role=WORKER", {
+    fetch("https://u-dev.uz/api/admin/users?role=WORKER", {
       method: "GET",
       headers: {
         "Content-type": "application/json",
@@ -44,7 +44,7 @@ const Home = () => {
   const createWorkerItem = (e) => {
     e.preventDefault();
   
-    fetch("http://45.154.2.116:7010/api/admin/users?role=WORKER", {
+    fetch("https://u-dev.uz/api/admin/users?role=WORKER", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +82,7 @@ const Home = () => {
   const editWorker = (e) => {
     e.preventDefault();
   
-    fetch(`http://45.154.2.116:7010/api/admin/users/${editWorkerId?.id}`, {
+    fetch(`https://u-dev.uz/api/admin/users/${editWorkerId?.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -120,7 +120,7 @@ const Home = () => {
   
   const delWorkerItem = async (id) => {
     try {
-      const response = await fetch(`http://45.154.2.116:7010/api/admin/users/${id}`, {
+      const response = await fetch(`https://u-dev.uz/api/admin/users/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
