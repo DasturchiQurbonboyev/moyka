@@ -26,7 +26,7 @@ const Box = () => {
   
 
   const getBoxes = () => {
-    fetch("http://45.154.2.116:7010/api/admin/boxes",{
+    fetch("https://u-dev.uz/api/admin/boxes",{
       method: "GET",
       headers: {
         "Content-type": "application/json",
@@ -40,7 +40,7 @@ const Box = () => {
       });
   }
   const getWorkers = () => {
-    fetch("http://45.154.2.116:7010/api/admin/users?role=WORKER", {
+    fetch("https://u-dev.uz/api/admin/users?role=WORKER", {
       method: "GET",
       headers: {
         "Content-type": "application/json",
@@ -54,7 +54,7 @@ const Box = () => {
   };
 
   const boxDelete = (id) => {
-    fetch(`http://45.154.2.116:7010/api/admin/boxes/${id}`, {
+    fetch(`https://u-dev.uz/api/admin/boxes/${id}`, {
       method: "DELETE",
       headers: {
         "Content-type": "application/json",
@@ -82,7 +82,7 @@ const Box = () => {
   const editBox = (e) => {
     e.preventDefault();
 
-    fetch(`http://45.154.2.116:7010/api/admin/boxes/${editBoxId?.id}`, {
+    fetch(`https://u-dev.uz/api/admin/boxes/${editBoxId?.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -121,7 +121,7 @@ const Box = () => {
   // const createBoxFunc = (e) => {
   //   e.preventDefault();
 
-  //   fetch("http://45.154.2.116:7010/api/admin/boxes", {
+  //   fetch("https://u-dev.uz/api/admin/boxes", {
   //     method: "POST",
   //     headers: {
   //       "Content-type": "application/json",
@@ -146,7 +146,7 @@ const Box = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch("http://45.154.2.116:7010/api/admin/boxes", {
+      const response = await fetch("https://u-dev.uz/api/admin/boxes", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

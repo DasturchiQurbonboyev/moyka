@@ -63,41 +63,57 @@ const Login = () => {
 
   return (
     <>
-      <div className="login__page">
-        <form onSubmit={loginSubmit} action="#" method="post" className="space-y-4 log-in">
-            <div>
-              <label htmlFor="login" className="mb-2  text-white text-lg">Login</label>
-              <input
-              style={{padding:"8px 12px", marginBlock:"8px"}}
-                onChange={(e)=> setLogin(e.target.value)}
-                id="text"
-                className="border p-3 dark:bg-indigo-700 text-white  dark:border-gray-700 shadow-md placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
-                type="login"
-                placeholder="Login"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="mb-2 text-white text-lg">Password</label>
-              <input
-              style={{padding:"8px 12px", marginBlock:"8px"}}
-                onChange={(e)=> setPassword(e.target.value)}
-                id="password"
-                className="border p-3 shadow-md dark:bg-indigo-700 text-white  dark:border-gray-700 placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
-                type="password"
-                placeholder="Password"
-                required
-              />
-            </div>
-            <button
-            style={{padding:"8px 12px", marginBlock:"8px"}}
-              className="bg-gradient-to-r dark:text-gray-300 from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
-              type="submit"
-            >
-              LOG IN
-            </button>
-          </form>
-      </div> 
+     <div className="wrapper">
+  {/* Fon rasmi (qoraytirilgan) */}
+  <div className="login__page"></div>
+
+  {/* Login blur va forma */}
+  <div className="log-in">
+    {/* Blur qatlami ustida fon rasmi */}
+    <div className="log-in__blur"></div>
+
+    {/* Tiniq forma kontenti */}
+    <form
+      onSubmit={loginSubmit}
+      action="#"
+      method="post"
+      className="log-in__content space-y-4"
+    >
+      <div>
+        <label htmlFor="login" className="mb-2 text-white text-lg">Login</label>
+        <input
+          style={{ padding: "8px 12px", marginBlock: "8px" }}
+          onChange={(e) => setLogin(e.target.value)}
+          id="login"
+          className="border p-3 dark:bg-indigo-700 text-white dark:border-gray-700 shadow-md placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
+          type="text"
+          placeholder="Login"
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="password" className="mb-2 text-white text-lg">Password</label>
+        <input
+          style={{ padding: "8px 12px", marginBlock: "8px" }}
+          onChange={(e) => setPassword(e.target.value)}
+          id="password"
+          className="border p-3 shadow-md dark:bg-indigo-700 text-white dark:border-gray-700 placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
+          type="password"
+          placeholder="Password"
+          required
+        />
+      </div>
+      <button
+        style={{ padding: "8px 12px", marginBlock: "8px" }}
+        className="bg-gradient-to-r dark:text-gray-300 from-blue-500 to-purple-500 shadow-lg mt-6 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out"
+        type="submit"
+      >
+        LOG IN
+      </button>
+    </form>
+  </div>
+</div>
+
     </>
   )
 }
